@@ -6,8 +6,10 @@ import com.muyi.lukman.exception.NotFoundException;
 import com.muyi.lukman.model.Employee;
 import com.muyi.lukman.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -48,27 +50,40 @@ public class EmployeeController {
     }
 
     @PostMapping(path = "/emp")
-    public Employee saveEmployeeDb(@RequestBody Employee empl){
-        if(employeeService.findById(empl.getId()) != null)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Employee saveEmployeeDb(@RequestBody @Valid Employee empl){
+        if(employeeService.findByEmployeeId(empl.getEmployeeId()) != null)
             throw new ConflictException("123","Employee with EmployeeId: "+empl.getEmployeeId()+" already exist.");
         return employeeService.createEmployee(empl);
     }
 
-//    @PutMapping(path = "/emp")
-//    public void updateEmployeeDb(@RequestBody Employee empl){
-//        employeeService.updateEmployee(empl);
-//    }
-//
-//    @DeleteMapping(path = "/emp/{id}")
-//    public void deleteEmployeeByIdDb(@PathVariable("id") Long id){
-//        employeeService.deleteEmployee(id);
-//    }
-//
+    @PutMapping(path = "/emp")
+    public void updateEmployeeDb(@RequestBody @Valid Employee empl){
+        if(empl.getId()==null || empl.getId()<1)
+            throw new BadRequestException("333","Invalid id");
+        Employee employee = employeeService.findById(empl.getId());
+        if(employee==null)
+            throw new NotFoundException("212","Record not found");
+        employeeService.updateEmployee(empl);
+    }
+
+    @DeleteMapping(path = "/emp/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEmployeeByIdDb(@PathVariable("id") Long id){
+        if(id<1)
+            throw new BadRequestException("345","Invalid id.");
+        Employee employee = employeeService.findById(id);
+        if(employee==null)
+            throw new NotFoundException("222","Employee with id: "+id+" not found");
+        employeeService.deleteEmployee(id);
+    }
+
     @GetMapping(path = "/emp")
     public List<Employee> getAllEmployeeDb(){
         List<Employee> emps = employeeService.findAll();
         if(emps==null)
-            throw new NotFoundException("","");
+            throw new NotFoundException("212","No record found");
+        return emps;
     }
 
     @GetMapping(path = "/emp2/{employeeid}")

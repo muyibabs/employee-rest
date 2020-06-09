@@ -1,6 +1,7 @@
 package com.muyi.lukman.model.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 @Entity
 @Table(name = "employeetbl", schema = "lukman-db")
@@ -11,7 +12,9 @@ public class Employee {
     private Long id;
 
     private String employeeId;
+
     private String name;
+
     private Integer age;
 
     public Long getId() {

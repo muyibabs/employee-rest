@@ -4,6 +4,7 @@ import com.muyi.lukman.dao.EmployeeDao;
 import com.muyi.lukman.model.Employee;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +19,7 @@ public class EmployeeService {
     EmployeeDao employeeDao;
     ModelMapper modelMapper;
 
+    @Autowired
     public EmployeeService(RestService restService, EmployeeDao employeeDao, ModelMapper modelMapper) {
         this.restService = restService;
         this.employeeDao = employeeDao;
@@ -78,12 +80,6 @@ public class EmployeeService {
     public List<Employee> findAll(){
         List<com.muyi.lukman.model.entity.Employee> employeeEntityList = employeeDao.findAll();
         //return modelMapper.map(employeeEntityList, new TypeToken<List<Employee>>() {}.getType());
-        if(employeeEntityList==null){
-            System.out.println("================ employeeEntityList is nulllllllllll");
-        }
-        if(employeeEntityList.size()==0){
-            System.out.println("================ employeeEntityList size is 0");
-        }
         if(employeeEntityList==null || employeeEntityList.size()==0){
             return null;
         }
